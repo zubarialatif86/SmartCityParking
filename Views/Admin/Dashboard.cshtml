@@ -1,0 +1,56 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard";
+}
+<div class="glass-card mb-3">
+    <div class="d-flex gap-3">
+        <a href="/Admin/AddSlot" class="btn-glass"><i class="fas fa-plus"></i> Add New Slot</a>
+        <a href="/Admin/EditSlotList" class="btn-glass"><i class="fas fa-edit"></i> Edit/Update Slot</a>
+    </div>
+</div>
+<div class="row g-4 mb-4">
+    <div class="col-md-3"><div class="glass-card text-center"><i class="fas fa-parking fa-2x text-info mb-2"></i><h5>Total Slots</h5><h2 class="display-6">@ViewBag.TotalSlots</h2></div></div>
+    <div class="col-md-3"><div class="glass-card text-center"><i class="fas fa-check-circle fa-2x text-success mb-2"></i><h5>Available</h5><h2 class="display-6">@ViewBag.AvailableSlots</h2></div></div>
+    <div class="col-md-3"><div class="glass-card text-center"><i class="fas fa-calendar-week fa-2x text-warning mb-2"></i><h5>Today Bookings</h5><h2 class="display-6">@ViewBag.TodayBookings</h2></div></div>
+    <div class="col-md-3"><div class="glass-card text-center"><i class="fas fa-rupee-sign fa-2x text-danger mb-2"></i><h5>Today Revenue</h5><h2 class="display-6">₹@ViewBag.TodayRevenue</h2></div></div>
+</div>
+<div class="row g-4 mb-4">
+    <div class="col-md-6"><div class="glass-card"><h5>Last 7 Days Bookings</h5><canvas id="bookingsChart" height="200"></canvas></div></div>
+    <div class="col-md-6"><div class="glass-card"><h5>Last 7 Days Revenue (₹)</h5><canvas id="revenueChart" height="200"></canvas></div></div>
+</div>
+<div class="glass-card">
+    <h5>Recent Bookings</h5>
+    <div class="table-responsive">
+        <table class="table glass-table">
+            <thead><tr><th>Vehicle</th><th>Slot</th><th>Start Time</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+                @foreach (var b in ViewBag.RecentBookings)
+                {
+                    <tr>
+                        <td>@b.VehicleNumber</td>
+                        <td>@(b.ParkingSlot?.SlotNumber ?? "N/A")</td>
+                        <td>@b.StartTime.ToString("g")</td>
+                        <td>₹@b.TotalAmount</td>
+                        <td><span class="badge @(b.Status == "Active" ? "bg-success" : b.Status == "Completed" ? "bg-secondary" : "bg-danger")">@b.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const labels = @Html.Raw(ViewBag.Labels);
+        const bookingsData = @Html.Raw(ViewBag.BookingsData);
+        const revenueData = @Html.Raw(ViewBag.RevenueData);
+        new Chart(document.getElementById('bookingsChart'), {
+            type: 'line',
+            data: { labels: labels, datasets: [{ label: 'Bookings', data: bookingsData, borderColor: '#38bdf8', tension: 0.3, fill: true }] }
+        });
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: { labels: labels, datasets: [{ label: 'Revenue (₹)', data: revenueData, borderColor: '#f97316', tension: 0.3, fill: true }] }
+        });
+    </script>
+}

@@ -1,0 +1,516 @@
+﻿@model IEnumerable<SmartCityParking.Models.ParkingSlot>
+@{
+    ViewData["Title"] = "Search Parking Slots";
+    var activeBookingsList = ViewBag.ActiveBookings as List<SmartCityParking.Models.Booking>;
+}
+
+<div class="container-fluid px-4 animate-fade-in text-white" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+    @if (ViewBag.QRCode != null)
+    {
+        <div class="alert alert-info border-glass bg-glass p-4 mb-4 d-flex align-items-center justify-content-between shadow-lg">
+            <div>
+                <h4 class="fw-bold"><i class="fa-solid fa-qrcode me-2"></i>Booking Confirmed!</h4>
+                <p class="mb-0">Aapka QR Code generate ho chuka hai. Isay scan kar ke parking access karein.</p>
+            </div>
+            <img src="@ViewBag.QRCode" alt="QR Code" style="width:120px; border-radius:10px; border: 4px solid #fff;" />
+        </div>
+    }
+
+    <div class="row mb-5 align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <h1 class="display-5 fw-extrabold tracking-tight dashboard-title">
+                <i class="fa-solid fa-magnifying-glass-location me-2 text-info animate-pulse-slow"></i>Find Your Parking Slot
+            </h1>
+            <p class="text-muted-custom fs-5 mb-0">Real-time live slot status and instant booking system.</p>
+        </div>
+        <div class="col-lg-6">
+            <form method="get" asp-controller="Booking" asp-action="Search" class="d-flex gap-3 bg-glass p-2 rounded-4 border-glass shadow-lg search-container">
+                <div class="input-group border-0 bg-transparent align-items-center">
+                    <span class="input-group-text bg-transparent border-0 text-muted-custom fs-5"><i class="fa-solid fa-location-dot text-info"></i></span>
+                    <input type="text" name="searchString" class="form-control bg-transparent border-0 text-white fs-5 focus-none placeholder-custom" placeholder="Search by City or Area (e.g. Saddar)..." value="@ViewData["CurrentFilter"]" />
+                </div>
+                <button type="submit" class="btn btn-search-vip px-4 py-3 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span class="d-none d-sm-inline">Search</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-5">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 border-glass bg-glass p-4 position-relative overflow-hidden transition-all hover-scale parking-card">
+                        <div class="position-absolute top-0 end-0 mt-3 me-3 z-index-top">
+                            @if (!item.IsReserved)
+                            {
+                                <span class="badge bg-success-glow text-success px-3 py-2 rounded-pill d-flex align-items-center gap-2 border-success-dim">
+                                    <span class="pulse-green"></span> Available
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger-glow text-danger px-3 py-2 rounded-pill d-flex align-items-center gap-2 border-danger-dim">
+                                    <span class="pulse-red"></span> Reserved
+                                </span>
+                            }
+                        </div>
+
+                        <div class="d-flex align-items-start gap-3 mt-4 pt-2 mb-4">
+                            <div class="icon-box-vip text-info rounded-3 d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-square-p fs-2"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <h3 class="fw-extrabold text-white mb-1 tracking-tight text-truncate">@item.SlotNumber</h3>
+                                <p class="text-muted-custom small mb-0 text-truncate d-flex align-items-center gap-1">
+                                    <i class="fa-solid fa-building text-info opacity-75"></i> @item.AreaName, @item.City
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-dark-dim rounded-3 p-3 mb-4 d-flex justify-content-between align-items-center border-glass-inner">
+                            <div>
+                                <span class="text-muted-custom small d-block uppercase tracking-wider font-mono">Price Rate</span>
+                                <span class="fw-extrabold text-white fs-4">Rs. @item.PricePerHour</span><span class="text-muted-custom small font-mono">/hr</span>
+                            </div>
+                            <div class="text-end">
+                                <span class="text-muted-custom small d-block uppercase tracking-wider font-mono">Node Type</span>
+                                <span class="badge bg-dark border-glass text-info small">SQL Live</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-2">
+                            @if (!item.IsReserved)
+                            {
+                                <form asp-controller="Booking" asp-action="BookSlot" method="post" class="d-flex flex-column gap-2">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="slotId" value="@item.Id" />
+                                    <div class="d-flex gap-2">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-dark border-glass text-muted-custom py-2"><i class="fa-regular fa-clock"></i></span>
+                                            <select name="hours" class="form-select bg-dark text-white border-glass py-2 font-semibold font-mono focus-none cursor-pointer">
+                                                <option value="1">1 Hour</option>
+                                                <option value="2">2 Hours</option>
+                                                <option value="3">3 Hours</option>
+                                                <option value="5">5 Hours</option>
+                                                <option value="8">8 Hours</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-booking-action w-100 py-2_5 fw-bold tracking-wide mt-1">
+                                        <i class="fa-solid fa-bolt me-1"></i> Book Slot Now
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="input-group opacity-50">
+                                        <span class="input-group-text bg-dark border-glass text-muted-custom py-2"><i class="fa-regular fa-clock"></i></span>
+                                        <select class="form-select bg-dark text-muted-custom border-glass py-2" disabled>
+                                            <option>N/A Hours</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-secondary disabled w-100 py-2_5 text-muted bg-glass-locked border-glass mt-1" style="border-radius: 12px;">
+                                        <i class="fa-solid fa-lock me-1"></i> Slot Locked
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <div class="p-5 rounded-4 bg-glass border-glass text-center max-w-md mx-auto shadow-lg">
+                    <i class="fa-solid fa-triangle-exclamation display-4 text-warning mb-3 animate-bounce"></i>
+                    <h4 class="text-white fw-bold">No Parking Slots Located</h4>
+                    <p class="text-muted-custom mb-0">We couldn't locate any structural nodes matching your search text.</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="bg-glass border-glass rounded-4 p-4 p-md-5 mt-5 shadow-lg position-relative overflow-hidden dashboard-table-card">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 border-bottom-glass pb-4">
+            <div>
+                <h2 class="h3 fw-bold text-white d-flex align-items-center gap-2 mb-1">
+                    <i class="fa-solid fa-shield-halved text-warning"></i> Active Passes & Reservation Logs
+                </h2>
+                <p class="text-muted-custom small mb-0">Real database rows reading session pipelines logs internally.</p>
+            </div>
+            <div>
+                <span class="badge bg-dark-node border-glass text-info px-3 py-2.5 rounded-3 tracking-wide font-mono fs-7 shadow-sm"><i class="fa-solid fa-network-wired me-1 text-info"></i> Secure SQL Node</span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle border-0 mb-0 custom-table-vip">
+                <thead>
+                    <tr class="text-muted-custom small uppercase tracking-wider border-bottom-glass-heavy font-mono">
+                        <th class="py-3 border-0">Slot Number</th>
+                        <th class="py-3 border-0">Identifier / User Node</th>
+                        <th class="py-3 border-0">Check-In Time</th>
+                        <th class="py-3 border-0">Releasing Target</th>
+                        <th class="py-3 border-0">Total Billing</th>
+                        <th class="py-3 border-0 text-end">Actions Pipeline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (activeBookingsList != null && activeBookingsList.Any())
+                    {
+                        @foreach (var item in activeBookingsList)
+                        {
+                            string logSlotNum = item.ParkingSlot != null ? item.ParkingSlot.SlotNumber : "N/A";
+                            <tr class="border-bottom-glass transition-colors">
+                                <td class="py-3.5 border-0 fw-extrabold text-info font-mono fs-5">@logSlotNum</td>
+                                <td class="py-3.5 border-0">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-white font-mono opacity-90">@item.UserEmail</span>
+                                        @if (item.UserEmail.Contains("Guest"))
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-0_5 rounded-2 fs-8 opacity-75">Temporary</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success-subtle-dim text-success border border-success-subtle-dim px-2 py-0_5 rounded-2 fs-8 opacity-75">Verified User</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="py-3.5 border-0 text-muted-custom font-mono">@item.StartTime.ToString("hh:mm tt")</td>
+                                <td class="py-3.5 border-0 text-info fw-bold font-mono">@item.EndTime.ToString("hh:mm tt")</td>
+                                <td class="py-3.5 border-0 text-success-bright fw-extrabold font-mono fs-5">Rs. @item.TotalAmount</td>
+                                <td class="py-3.5 border-0 text-end">
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <a asp-controller="Booking" asp-action="Edit" asp-route-id="@item.ParkingSlotId" class="btn btn-action-edit d-flex align-items-center gap-1">
+                                            <i class="fa-solid fa-pen-to-square"></i> Parameters
+                                        </a>
+                                        <form asp-controller="Booking" asp-action="Release" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Kya aap is transaction slot ko live database se release karna chahte hain?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-action-release d-flex align-items-center gap-1">
+                                                <i class="fa-regular fa-circle-xmark"></i> Release Node
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 border-0 text-muted-custom small font-mono">
+                                <i class="fa-solid fa-folder-open d-block fs-3 mb-2 opacity-50"></i> No active parking session pipelines streaming currently.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-5 mb-5">
+        <h2 class="text-white fw-bold mb-4"><i class="fa-solid fa-map-location-dot text-info me-2"></i> Live Parking Map</h2>
+        <div id="map" style="height: 400px; width: 100%; border-radius: 20px; border: 2px solid #555;"></div>
+    </div>
+</div>
+
+<script>
+    function initMap() {
+        const pindiLoc = { lat: 33.6844, lng: 73.0479 };
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 13,
+            center: pindiLoc,
+            styles: [{ "elementType": "geometry", "stylers": [{ "color": "#242f3e" }] }]
+        });
+        new google.maps.Marker({ position: pindiLoc, map: map, title: "Smart Parking Node" });
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBd_Mk4utBNYiaKjD2uIqhRwFE3NnpK-EA&callback=initMap" async defer></script>
+
+<style>
+    .bg-glass {
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+    }
+
+    .bg-glass-locked {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(10px);
+    }
+
+    .bg-dark-dim {
+        background: rgba(2, 6, 23, 0.5);
+    }
+
+    .bg-dark-node {
+        background: rgba(2, 6, 23, 0.7);
+    }
+
+    .border-glass {
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .border-glass-inner {
+        border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    }
+
+    .border-bottom-glass {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    }
+
+    .border-bottom-glass-heavy {
+        border-bottom: 2px solid rgba(56, 189, 248, 0.25) !important;
+    }
+
+    .text-muted-custom {
+        color: #94a3b8 !important;
+    }
+
+    .text-success-bright {
+        color: #4ade80 !important;
+    }
+
+    .dashboard-title {
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        background: linear-gradient(to right, #ffffff, #93c5fd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .placeholder-custom::placeholder {
+        color: #64748b !important;
+        opacity: 0.8;
+    }
+
+    .parking-card {
+        border-radius: 24px;
+        min-height: 380px !important;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hover-scale:hover {
+        transform: translateY(-8px);
+        border-color: rgba(56, 189, 248, 0.4) !important;
+        box-shadow: 0 20px 40px rgba(56, 189, 248, 0.15);
+    }
+
+    .icon-box-vip {
+        width: 54px;
+        height: 54px;
+        min-width: 54px;
+        background: rgba(56, 189, 248, 0.12) !important;
+        border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .search-container {
+        border-radius: 16px;
+        transition: all 0.3s ease;
+    }
+
+        .search-container:focus-within {
+            border-color: rgba(56, 189, 248, 0.5) !important;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.25) !important;
+        }
+
+    .focus-none:focus {
+        box-shadow: none !important;
+        outline: none !important;
+        background: transparent !important;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .form-select option {
+        background-color: #0f172a !important;
+        color: #fff;
+    }
+
+    .bg-success-glow {
+        background: rgba(34, 197, 94, 0.12) !important;
+    }
+
+    .border-success-dim {
+        border: 1px solid rgba(34, 197, 94, 0.25) !important;
+    }
+
+    .bg-danger-glow {
+        background: rgba(239, 68, 68, 0.12) !important;
+    }
+
+    .border-danger-dim {
+        border: 1px solid rgba(239, 68, 68, 0.25) !important;
+    }
+
+    .bg-success-subtle-dim {
+        background: rgba(34, 197, 94, 0.08) !important;
+    }
+
+    .btn-search-vip {
+        background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+        color: white;
+        font-weight: 600;
+        border-radius: 12px;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-search-vip:hover {
+            opacity: 0.95;
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+        }
+
+    .btn-booking-action {
+        background: transparent;
+        border: 1px solid #38bdf8;
+        color: #38bdf8;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-booking-action:hover {
+            background: linear-gradient(135deg, #38bdf8 0%, #0369a1 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+        }
+
+    .btn-action-edit {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: #fbbf24;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+    }
+
+        .btn-action-edit:hover {
+            background: #f59e0b;
+            color: #000;
+            border-color: transparent;
+        }
+
+    .btn-action-release {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #f87171;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+    }
+
+        .btn-action-release:hover {
+            background: #ef4444;
+            color: white;
+            border-color: transparent;
+        }
+
+    .fs-7 {
+        font-size: 0.825rem !important;
+    }
+
+    .fs-8 {
+        font-size: 0.725rem !important;
+    }
+
+    .py-2_5 {
+        padding-top: 0.65rem !important;
+        padding-bottom: 0.65rem !important;
+    }
+
+    .z-index-top {
+        z-index: 10;
+    }
+
+    .pulse-green {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #4ade80;
+        border-radius: 50%;
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5);
+        animation: pulseGreenAnim 2s infinite;
+    }
+
+    .pulse-red {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #f87171;
+        border-radius: 50%;
+        box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.5);
+        animation: pulseRedAnim 2s infinite;
+    }
+
+    .animate-pulse-slow {
+        animation: pulseSlow 3s infinite;
+    }
+
+    @@keyframes pulseGreenAnim {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5);
+        }
+
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 6px rgba(74, 222, 128, 0);
+        }
+
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+        }
+    }
+
+    @@keyframes pulseRedAnim {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.5);
+        }
+
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 6px rgba(248, 113, 113, 0);
+        }
+
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+        }
+    }
+
+    @@keyframes pulseSlow {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    .custom-table-vip tbody tr {
+        transition: background-color 0.2s ease-in-out;
+    }
+
+        .custom-table-vip tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+        }
+</style>

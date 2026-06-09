@@ -1,0 +1,35 @@
+﻿@model IEnumerable<SmartCityParking.Models.Booking>
+
+<div class="container mt-5 text-white">
+    <h2 class="fw-bold">My Booking History</h2>
+    <hr />
+    @if (Model.Any())
+    {
+        <table class="table table-dark table-hover mt-4">
+            <thead>
+                <tr>
+                    <th>Slot</th>
+                    <th>Area</th>
+                    <th>Start Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ParkingSlot.SlotNumber</td>
+                        <td>@item.ParkingSlot.AreaName</td>
+                        <td>@item.StartTime.ToString("g")</td>
+                        <td><span class="badge bg-success">@item.BookingStatus</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No bookings found yet.</p>
+    }
+    <a asp-controller="Booking" asp-action="Search" class="btn btn-primary">Book New Slot</a>
+</div>

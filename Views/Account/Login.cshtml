@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Driver Login";
+}
+
+<style>
+    .exclusive-auth-node {
+        background: var(--surface-glass); border: 1px solid var(--surface-border);
+        border-radius: 30px; padding: 50px; max-width: 480px; margin: 40px auto;
+        backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+        box-shadow: var(--shadow-neu); position: relative;
+    }
+    .exclusive-auth-node:hover { border-color: var(--accent-glow); }
+
+    .orb-space-container { display: flex; justify-content: center; margin-bottom: 24px; }
+    .quantum-orb {
+        width: 70px; height: 70px; border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #60a5fa, #2563eb, #0f172a);
+        animation: floatOrb 4s ease-in-out infinite alternate, pulseGlow 2s ease-in-out infinite alternate;
+    }
+    @@keyframes floatOrb { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
+    @@keyframes pulseGlow { 0% { box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3); } 100% { box-shadow: 0 10px 30px rgba(129, 140, 248, 0.6); } }
+
+    .auth-header h2 { font-weight: 800; font-size: 2.1rem; color: var(--text-main); }
+    .auth-header p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 36px; }
+
+    .input-wrapper-vip { position: relative; margin-bottom: 24px; }
+    .input-wrapper-vip label { display: block; font-weight: 700; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+    .input-container-inner { position: relative; display: flex; align-items: center; }
+    .input-container-inner i { position: absolute; left: 18px; color: var(--text-muted); }
+    
+    .input-vip-hybrid {
+        width: 100%; padding: 14px 16px 14px 54px; border: 1px solid var(--surface-border);
+        border-radius: 14px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.02);
+        color: var(--text-main); box-shadow: var(--shadow-active); outline: none; transition: all 0.3s ease;
+    }
+    .input-vip-hybrid:focus { border-color: var(--accent-glow); background: var(--surface-glass); }
+
+    .btn-cyber-submit { background: var(--accent-gradient); color: #ffffff; width: 100%; border: none; padding: 15px; border-radius: 14px; font-weight: 700; font-size: 1rem; margin-top: 12px; cursor: pointer; transition: all 0.3s ease; }
+    .btn-cyber-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4); }
+    .auth-footer { margin-top: 32px; font-size: 0.9rem; color: var(--text-muted); text-align: center; }
+    .auth-footer a { color: var(--accent-glow); text-decoration: none; font-weight: 600; }
+</style>
+
+<div class="exclusive-auth-node">
+    <div class="orb-space-container">
+        <div class="quantum-orb" id="loadingOrb"></div>
+    </div>
+
+    <div class="auth-header text-center">
+        <h2>Driver Portal</h2>
+        <p>Log in to manage your vehicle bookings, parking passes, and wallet balance.</p>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger text-center" style="border-radius: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #f87171; font-size: 0.9rem; padding: 10px; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> @ViewBag.Error
+        </div>
+    }
+
+    <form asp-controller="Account" asp-action="Login" method="post">
+        <div class="input-wrapper-vip">
+            <label>Registered Email</label>
+            <div class="input-container-inner">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" name="email" class="input-vip-hybrid" placeholder="driver@email.com" required />
+            </div>
+        </div>
+
+        <div class="input-wrapper-vip">
+            <label>Password</label>
+            <div class="input-container-inner">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" name="password" class="input-vip-hybrid" placeholder="••••••••" required />
+            </div>
+        </div>
+
+        <button type="submit" class="btn-cyber-submit">Sign In Account</button>
+    </form>
+
+    <div class="auth-footer">
+        New to Smart Parking? <a asp-controller="Account" asp-action="Register">Create Driver Account</a>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+﻿@{
+    Layout = "_AdminLayout"; ViewData["Title"] = "Settings";
+}
+<div class="premium-card">
+    <h3><i class="fas fa-cog"></i> System Settings</h3>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    <form method="post">
+        <div class="mb-3"><label>Site Name</label><input name="siteName" class="form-control bg-dark text-white" value="SmartCity Parking" /></div>
+        <div class="mb-3"><label>Default Hourly Rate (₹)</label><input name="defaultRate" type="number" class="form-control bg-dark text-white" value="50" /></div>
+        <div class="mb-3"><label>Booking Timeout (minutes)</label><input name="bookingTimeout" type="number" class="form-control bg-dark text-white" value="15" /></div>
+        <button type="submit" class="btn-glass">Save Settings</button>
+    </form>
+</div>

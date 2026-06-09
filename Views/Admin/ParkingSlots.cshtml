@@ -1,0 +1,41 @@
+﻿@model IEnumerable<SmartCityParking.Models.ParkingSlot>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Parking Slots";
+}
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+<div class="glass-card">
+    <h3><i class="fas fa-parking"></i> Parking Slots (View Only)</h3>
+    <div class="table-responsive mt-3">
+        <table class="dark-table">
+            <thead>
+                <tr><th>Slot #</th><th>Location</th><th>Type</th><th>Price/hr</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>@s.SlotNumber</td>
+                        <td>@s.Location</td>
+                        <td>@s.VehicleType</td>
+                        <td>₹@s.PricePerHour</td>
+                        <td>@(s.IsAvailable ? "<span class='badge bg-success'>Available</span>" : "<span class='badge bg-danger'>Occupied</span>")</td>
+                        <td>
+                            <form asp-action="DeleteSlot" method="post" onsubmit="return confirm('Delete slot?');">
+                                <input type="hidden" name="id" value="@s.Id" />
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

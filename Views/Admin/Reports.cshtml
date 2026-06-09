@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Reports";
+}
+<div class="glass-card mb-4">
+    <h3 class="text-info">📅 Monthly Revenue @DateTime.Now.Year</h3>
+    <canvas id="monthlyChart" height="100"></canvas>
+</div>
+<div class="glass-card mb-4">
+    <h3 class="text-info">📊 Slot Utilization (Top 10)</h3>
+    <canvas id="utilChart" height="100"></canvas>
+</div>
+<div class="glass-card">
+    <h3 class="text-info">📎 Export Data</h3>
+    <button onclick="window.location.href='/Admin/ExportBookingsCSV'" class="btn-glass"><i class="fas fa-file-csv"></i> Export Bookings CSV</button>
+    <button onclick="window.print()" class="btn-glass"><i class="fas fa-print"></i> Print Report</button>
+</div>
+
+@section Scripts {
+    <script>
+        const months = @Html.Raw(ViewBag.Months);
+        const monthlyRevenue = @Html.Raw(ViewBag.MonthlyRevenue);
+        new Chart(document.getElementById('monthlyChart'), { type: 'bar', data: { labels: months, datasets: [{ label: 'Revenue (₹)', data: monthlyRevenue, backgroundColor: '#38bdf8' }] } });
+        const slotLabels = @Html.Raw(ViewBag.UtilizationLabels);
+        const slotData = @Html.Raw(ViewBag.UtilizationData);
+        new Chart(document.getElementById('utilChart'), { type: 'bar', data: { labels: slotLabels, datasets: [{ label: 'Bookings Count', data: slotData, backgroundColor: '#f97316' }] } });
+    </script>
+}

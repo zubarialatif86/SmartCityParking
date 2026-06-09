@@ -1,0 +1,60 @@
+﻿@model SmartCityParking.Models.ParkingSlot
+
+@{
+    ViewData["Title"] = "Add New Parking Space";
+}
+
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg p-4 rounded-4"
+                 style="background: rgba(30, 41, 59, 0.55); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08);">
+
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-light"><i class="bi bi-plus-circle-fill text-success me-2"></i> Register New User Space</h3>
+                    <p class="text-muted small">Insert unique entity nodes inside the relational MSSQL structure logs context mapping.</p>
+                </div>
+
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="SlotNumber" class="form-label text-secondary fw-semibold small"></label>
+                        <input asp-for="SlotNumber" class="form-control bg-dark text-light border-secondary border-opacity-50" placeholder="e.g. Slot-C1" style="border-radius: 8px;" />
+                        <span asp-validation-for="SlotNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AreaName" class="form-label text-secondary fw-semibold small"></label>
+                        <input asp-for="AreaName" class="form-control bg-dark text-light border-secondary border-opacity-50" placeholder="e.g. Blue Area" style="border-radius: 8px;" />
+                        <span asp-validation-for="AreaName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="City" class="form-label text-secondary fw-semibold small"></label>
+                        <input asp-for="City" class="form-control bg-dark text-light border-secondary border-opacity-50" placeholder="e.g. Islamabad" style="border-radius: 8px;" />
+                        <span asp-validation-for="City" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="PricePerHour" class="form-label text-secondary fw-semibold small"></label>
+                        <input asp-for="PricePerHour" type="number" class="form-control bg-dark text-light border-secondary border-opacity-50" placeholder="Rate in Rs." style="border-radius: 8px;" />
+                        <span asp-validation-for="PricePerHour" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success w-100 fw-bold py-2" style="border-radius: 8px;">Save Space Instance</button>
+                        <a asp-action="Search" class="btn btn-outline-secondary w-50 py-2" style="border-radius: 8px;">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

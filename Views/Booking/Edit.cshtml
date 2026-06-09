@@ -1,0 +1,65 @@
+﻿@model SmartCityParking.Models.ParkingSlot
+
+@{
+    ViewData["Title"] = "Modify Slot Parameters";
+}
+
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg p-4 rounded-4"
+                 style="background: rgba(30, 41, 59, 0.55); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08);">
+
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-warning"><i class="bi bi-pencil-square me-2"></i> Proper Edit Parameters</h3>
+                    <p class="text-muted small">Altering active data records across instance identification code schema framework.</p>
+                </div>
+
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="SlotNumber" class="form-label text-secondary fw-semibold small"></label>
+                        <input asp-for="SlotNumber" class="form-control bg-dark text-light border-secondary border-opacity-50" style="border-radius: 8px;" />
+                        <span asp-validation-for="SlotNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AreaName" class="form-label text-secondary fw-semibold small"></label>
+                        <input asp-for="AreaName" class="form-control bg-dark text-light border-secondary border-opacity-50" style="border-radius: 8px;" />
+                        <span asp-validation-for="AreaName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="City" class="form-label text-secondary fw-semibold small"></label>
+                        <input asp-for="City" class="form-control bg-dark text-light border-secondary border-opacity-50" style="border-radius: 8px;" />
+                        <span asp-validation-for="City" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PricePerHour" class="form-label text-secondary fw-semibold small"></label>
+                        <input asp-for="PricePerHour" type="number" class="form-control bg-dark text-light border-secondary border-opacity-50" style="border-radius: 8px;" />
+                        <span asp-validation-for="PricePerHour" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4 form-check form-switch p-0 ps-5 text-start">
+                        <input class="form-check-input ms- -5 bg-secondary border-0" type="checkbox" asp-for="IsReserved" id="isReservedSwitch" style="transform: scale(1.2);">
+                        <label class="form-check-label text-light small fw-bold ms-2" for="isReservedSwitch">Force Lock Slot (Manual Override Status)</label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning text-dark w-100 fw-bold py-2" style="border-radius: 8px;">Save Modifications</button>
+                        <a asp-action="Search" class="btn btn-outline-secondary w-50 py-2" style="border-radius: 8px;">Back</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

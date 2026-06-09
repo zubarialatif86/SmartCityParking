@@ -1,0 +1,26 @@
+﻿@model IEnumerable<SmartCityParking.Models.ParkingSlot>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Select Slot to Edit";
+}
+<div class="glass-card">
+    <h3><i class="fas fa-edit"></i> Select a Parking Slot to Edit</h3>
+    <div class="table-responsive mt-3">
+        <table class="dark-table">
+            <thead><tr><th>Slot #</th><th>Location</th><th>Type</th><th>Price/hr</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>@s.SlotNumber</td>
+                        <td>@s.Location</td>
+                        <td>@s.VehicleType</td>
+                        <td>₹@s.PricePerHour</td>
+                        <td>@(s.IsAvailable ? "Available" : "Occupied")</td>
+                        <td><a href="/Admin/EditSlot?id=@s.Id" class="btn-glass">Edit</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+﻿@model IEnumerable<SmartCityParking.Models.User>
+@{
+    Layout = "_AdminLayout"; ViewData["Title"] = "Users";
+}
+<div class="premium-card"><h3><i class="fas fa-users"></i> Registered Users</h3><div class="table-responsive"><table class="table table-dark glass-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Wallet</th><th>Blocked</th><th>Actions</th></tr></thead><tbody>@foreach(var u in Model){
+    <tr><td>@u.FullName</td><td>@u.Email</td><td>@u.Phone</td><td>₹@u.WalletBalance</td><td>@(u.IsBlocked ? "Yes" : "No")</td><td><form asp-action="ToggleBlockUser" method="post" class="d-inline"><input type="hidden" name="id" value="@u.Id" /><button class="btn btn-sm @(u.IsBlocked ? "btn-success" : "btn-warning")">@(u.IsBlocked ? "Unblock" : "Block")</button></form><form asp-action="DeleteUser" method="post" class="d-inline"><input type="hidden" name="id" value="@u.Id" /><button class="btn btn-sm btn-danger">Delete</button></form></td></tr>
+}
+</tbody></table></div></div>
